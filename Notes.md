@@ -361,5 +361,245 @@ Similarly:
 
 ---
 
-## Query 3:
-#### Response For Query 3: 
+## Query 3: Since while(){} is a statement why cant we keep the `;` at the end of the while loop?
+#### Response For Query 3:  Lets fully unpack **why we can’t normally put a semicolon after a `while` loop**, even though a `while` loop is technically a **statement** in Java.
+
+
+## 🧩 Step 1: Yes — `while (...) { ... }` **is** a Statement
+
+In Java, the following is considered a **statement**:
+
+```java
+while (condition) {
+    // body
+}
+```
+
+This is called an **iteration statement** (one of the categories of Java statements, along with declaration statements, expression statements, selection statements, etc.).
+
+So yes, you’re absolutely right — it *is* a statement.
+But not all statements *require* a semicolon.
+
+---
+
+## ⚙️ Step 2: Two Major Kinds of Statements in Java
+
+In Java syntax, there are mainly **two categories** of statements:
+
+1. **Simple statements (end with a semicolon):**
+   These perform a single action and are terminated with `;`.
+
+   Examples:
+
+   ```java
+   int x = 5;
+   x++;
+   System.out.println(x);
+   ```
+
+   Each of these ends with a semicolon because they’re **expression statements** — meaning, they are standalone expressions converted into statements.
+
+2. **Compound or control statements (do NOT end with a semicolon):**
+   These control the **flow** of execution and usually enclose **blocks** of code or other statements.
+
+   Examples:
+
+   ```java
+   if (x > 0) {
+       System.out.println("Positive");
+   }
+
+   while (x < 10) {
+       x++;
+   }
+
+   for (int i = 0; i < 5; i++) {
+       System.out.println(i);
+   }
+   ```
+
+   These **do not** need a semicolon because their ending is **defined by the block `{ ... }`**, not by a `;`.
+
+---
+
+## 🚫 Step 3: What Happens If You Add a Semicolon After `while`?
+
+Let’s look at this:
+
+```java
+while (condition) {
+    // body
+};
+```
+
+— i.e., there **is** a block `{ ... }` after the `while`,
+but you’ve also added a **semicolon at the very end** (after the closing brace).
+
+Let’s analyze this carefully — because this is a *subtle but important* distinction that confuses even intermediate-level developers.
+
+---
+
+## 🧩 Step 4: The Code Structure
+
+Your code:
+
+```java
+while (condition) {
+    // body
+};
+```
+
+This actually consists of **two separate statements**:
+
+1. `while (condition) { ... }` — the **while loop statement**
+2. `;` — an **empty statement**
+
+So, syntactically, Java sees it as:
+
+```java
+(while loop statement)
+(empty statement)
+```
+
+This is **completely valid Java code** — it will compile **without any error**.
+
+---
+
+## ⚙️ Step 5: Why Does Java Allow It?
+
+Because the semicolon (`;`) represents a **statement terminator**,
+but it can also **exist as a statement by itself** — known as an **empty statement**.
+
+Example:
+
+```java
+; // does nothing — valid empty statement
+```
+
+So, after your `while` block finishes, that final semicolon just means:
+
+> “Execute an empty statement (do nothing).”
+
+Thus, Java allows it.
+It’s not needed, but it’s **syntactically valid** — just **redundant**.
+
+---
+
+## 🚫 Step 6: Why You Normally Shouldn’t Write It
+
+Even though the compiler accepts it, you almost never see it written that way because:
+
+* It **adds confusion** — developers might think it’s part of the loop’s syntax.
+* It **serves no purpose** — the loop is already a complete statement by itself.
+* It **breaks the visual consistency** — Java conventions prefer to omit such redundant semicolons.
+
+So:
+
+```java
+while (condition) {
+    // body
+}
+```
+
+✅ is clean and conventional.
+Whereas:
+
+```java
+while (condition) {
+    // body
+};
+```
+
+⚠️ compiles fine, but looks awkward and unnecessary.
+
+---
+
+## 🧠 Step 7: Difference Between These Two
+
+| Form                         | Meaning                                      | Commonly Used            |
+| ---------------------------- | -------------------------------------------- | ------------------------ |
+| `while (condition);`         | Empty loop — body is just `;` (does nothing) | ❌ No (bug-prone)         |
+| `while (condition) { ... };` | Valid loop + empty statement after it        | ⚙️ Valid but unnecessary |
+| `while (condition) { ... }`  | Clean and conventional form                  | ✅ Yes                    |
+
+---
+
+## 💡 Step 8: Why Does It Still Compile (Deeper Explanation)
+
+From Java’s **grammar specification**, a `Statement` can be:
+
+```
+Statement:
+    Block
+    EmptyStatement
+    ExpressionStatement
+    IfThenStatement
+    WhileStatement
+    ...
+```
+
+And an `EmptyStatement` is defined simply as:
+
+```
+EmptyStatement:
+    ;
+```
+
+So when the compiler reads:
+
+```java
+while (condition) {
+    // body
+};
+```
+
+It parses it as:
+
+```
+WhileStatement
+EmptyStatement
+```
+
+→ Both are valid in sequence. Hence, **no compilation error**.
+
+---
+
+## ⚙️ Step 9: Rust Comparison
+
+If you tried to do the same thing in **Rust**:
+
+```rust
+while condition {
+    // body
+};
+```
+
+✅ Rust also allows it — but the meaning is different!
+
+* In Rust, semicolons **separate expressions**.
+* The `while` loop in Rust is **an expression** that evaluates to `()`, the unit type (similar to “void”).
+
+So, in Rust, adding `;` at the end **just discards** the loop’s result (though loops don’t return values normally).
+Again, it’s **harmless but unnecessary**.
+
+---
+
+## ✅ Final Summary
+
+| Case                    | Meaning                                               | Valid in Java? | Recommended?       | Notes                                     |
+| ----------------------- | ----------------------------------------------------- | -------------- | ------------------ | ----------------------------------------- |
+| `while (cond);`         | Empty infinite loop                                   | ✅              | ❌ No               | Body is just an empty statement           |
+| `while (cond) { ... }`  | Normal loop                                           | ✅              | ✅ Yes              | Standard style                            |
+| `while (cond) { ... };` | Normal loop + empty statement                         | ✅              | ⚠️ Not recommended | Redundant semicolon                       |
+| Rust equivalent         | Loop is expression (returns `()`), semicolon optional | ✅              | ⚙️ Neutral         | Same concept applies, different semantics |
+
+---
+
+### 🔍 In short:
+
+* Your version (`while (cond) { ... };`) **compiles fine**.
+* The extra semicolon just adds an **empty statement** after the loop.
+* It’s **not wrong**, but **redundant** and **not stylistically recommended**.
+
+---
+
