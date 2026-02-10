@@ -24,8 +24,6 @@
 
 
 
-
-
 ---
 
 # Below Are The Things That I Need To Do Later For This Chapter Of `Strings`.
